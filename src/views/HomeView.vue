@@ -5,7 +5,14 @@
 </template>
 
 <script setup>
+    import { onMounted } from 'vue';
 
+    //Emits
+    const emits = defineEmits(['childCompLogin']);
+
+    onMounted(() => {
+        emits('childCompLogin', false);
+    });
 </script>
 
 <style scoped>
