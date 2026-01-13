@@ -1,0 +1,39 @@
+import HomeView from '@/views/HomeView.vue'
+import LoginView from '@/views/LoginView.vue'
+import OrdersView from '@/views/OrdersView.vue'
+import StockView from '@/views/StockView.vue'
+import UserView from '@/views/UserView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: "/",
+      name: "kontrollpanel",
+      component: HomeView,
+    },
+    {
+      path: "/logga_in",
+      name: "logga_in",
+      component: LoginView,
+    },
+    {
+      path: "/lager",
+      name: "lager",
+      component: StockView
+    },
+    {
+      path: "/inkop",
+      name: "inkop",
+      component: OrdersView
+    },
+    {
+      path: "/anvandare",
+      name: "anvandare",
+      component: UserView
+    }
+  ],
+})
+
+export default router
