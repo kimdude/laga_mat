@@ -1,18 +1,22 @@
 <script setup>
   import { RouterView } from 'vue-router';
   import { ref } from 'vue';
+  import { jwtDecode } from 'jwt-decode';
   import Header from'./components/Header.vue';
 
   const childCompLogin = ref(false);
+  const roleAdmin =  false;
 
   //Check user role
   const getRole = () => {
 
     const token = localStorage.getItem("token");
-    const decodedToken = token;
+    const decodedToken = jwtDecode(token);
 
-    console.log(decoded);
+    return decodedToken.permission;
   }
+
+  getRole();
 
 </script>
 

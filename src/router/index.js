@@ -4,6 +4,7 @@ import OrdersView from '@/views/OrdersView.vue';
 import StockView from '@/views/StockView.vue';
 import UserView from '@/views/UserView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { jwtDecode } from 'jwt-decode';
 
 //Routes
 const router = createRouter({
@@ -37,26 +38,38 @@ const router = createRouter({
   ],
 });
 
-//Simple authorization of user
+//Authorization of user
 const authUser = () => {
-  if(!localStorage.getItem("token")) return false;
-  else return true;
+
+  const token = localStorage.getItem("token");
+
+  if(token) {
+    const decodedToken = jwtDecode(token);
+
+    //Comparing current time with expiration time
+    const currentTime = Date.now();
+    const expTime = decodedToken.exp * 1000;
+
+    if(expTime > currentTime) return true;
+    else return false;
+
+  } else {
+    return false;
+  }
+
 }
 
 //Redirecting with global nav guard
 router.beforeEach((to, from) => {
 
-  if(to.name !== "logga_in") {
-    const canAccess = authUser();
+  const canAccess = authUser();
 
-    //Redirecting not logged-in users to login-page
-    if(!canAccess) return "/logga_in";
-
-  } else if (to.name === "logga_in") {
-    const canAccess = authUser();
-
-    //Redirecting logged-in users to home-page
-    if(canAccess) return "/";
+  if(to.name !== "logga_in" && !canAccess) {
+    return "/logga_in";
+  } else if (to.name === "logga_in" && canAccess) {
+    return "/";
+  } else {
+    return;
   }
 });
 
