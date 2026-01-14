@@ -1,8 +1,22 @@
 <template>
     <!-- Alla produkter -->
-    <section>
+    <section class="p-4 mx-4">
+
+        <!-- Search bar -->
+        <div class="container mb-4 pb-4">
+            <div class="row align-items-center">
+                <label for="searchProduct" class="form-label col-1"></label>
+                <div class="col-8">
+                    <input v-model="searchProduct" type="text" id="searchProduct" class="form-control" placeholder="Produkt, Produkt-id, EAN-kod...">
+                </div>
+                <button class="col-1 btn btn-warning">Sök</button>
+            </div>
+        </div>
+
         <h2>Alla produkter</h2>
-        <products />
+        <!-- All products -->
+        <ProductsTable :shortcut="false"/>
+
     </section>
 </template>
 
@@ -10,14 +24,15 @@
     //Imports
     import { useRouter } from 'vue-router';
     import { ref, onMounted } from 'vue';
-    import Products from '@/components/Products.vue';
+    import ProductsTable from '@/components/ProductsTable.vue';
 
     //Variables
     const router = useRouter();
     const token = localStorage.getItem("token");
 
-    //Reference variables
-    let allProducts = ref({result: []});                    
+    //Reactive variables
+    const allProducts = ref({result: []});       
+    const searchProduct = ref('');
 
     //When view is loaded
     onMounted(()=> {
@@ -46,8 +61,7 @@
             return;
 
         } catch(error) {
-            console.log(error)
-            /* router.push = ({name: "logga_in"});  */
+            router.push = ({name: "logga_in"});
         }
     }
 </script>

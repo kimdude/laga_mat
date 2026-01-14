@@ -1,6 +1,6 @@
 <template>
     <!-- Alla beställningar -->
-    <section>
+    <section class="p-4 mx-4">
         <h2>Alla inköp</h2>
         <table class="table table-striped">
             <thead>
