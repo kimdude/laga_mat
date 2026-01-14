@@ -16,8 +16,6 @@
     return decodedToken.permission;
   }
 
-  getRole();
-
 </script>
 
 <template>

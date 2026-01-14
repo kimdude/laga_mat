@@ -1,16 +1,30 @@
 <template>
-    <!-- Alla produkter -->
-    <section>
-        <h2>Alla produkter</h2>
-        <products />
-    </section>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Produkt</th>
+            <th scope="col">Märke</th>
+            <th scope="col">Pris</th>
+            <th scope="col">Lager&shy;status</th>
+            <th scope="col">Antal</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="product in allProducts" :key="product.product_id">
+            <td>{{product.name}}</td>
+            <td>{{product.label}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.status}}</td>
+            <td>{{product.amount}}</td>
+        </tr>
+    </tbody>
+</table>
 </template>
 
 <script setup>
     //Imports
     import { useRouter } from 'vue-router';
     import { ref, onMounted } from 'vue';
-    import Products from '@/components/Products.vue';
 
     //Variables
     const router = useRouter();

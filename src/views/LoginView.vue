@@ -70,7 +70,7 @@
                 const data = await result.json();
 
                 localStorage.setItem("token", data.result.token);
-                router.push = ("/");
+                router.push = ({name: "kontrollpanel"});
 
             } else {
                 errorMessage.value = "Felaktigt användarnamn eller lösenord.";
