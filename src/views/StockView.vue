@@ -1,69 +1,31 @@
 <template>
     <!-- Alla produkter -->
     <section class="p-4 mx-4">
-
         <!-- Search bar -->
-        <div class="container mb-4 pb-4">
-            <div class="row align-items-center">
-                <label for="searchProduct" class="form-label col-1"></label>
-                <div class="col-8">
-                    <input v-model="searchProduct" type="text" id="searchProduct" class="form-control" placeholder="Produkt, Produkt-id, EAN-kod...">
-                </div>
-                <button class="col-1 btn btn-warning">Sök</button>
-            </div>
-        </div>
+        <SearchFilter parent="products" @find="searchProduct"/>
 
         <h2>Alla produkter</h2>
-        <!-- All products -->
-        <ProductsTable :shortcut="false"/>
 
+        <!-- All products -->
+        <ProductsTable :shortcut="false" :search-term="product"/>
     </section>
 </template>
 
 <script setup>
     //Imports
-    import { useRouter } from 'vue-router';
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import ProductsTable from '@/components/ProductsTable.vue';
-
-    //Variables
-    const router = useRouter();
-    const token = localStorage.getItem("token");
+    import SearchFilter from '@/components/SearchFilter.vue';
 
     //Reactive variables
-    const allProducts = ref({result: []});       
-    const searchProduct = ref('');
+    const product = ref("");
 
-    //When view is loaded
-    onMounted(()=> {
-        fetchProducts();
-    });
-
-    //Fetching all products
-    const fetchProducts = async() => {
-        try {
-            const result = await fetch("https://dt193g-projekt.onrender.com/products", {
-                method: "GET",
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": "Bearer " + token
-                }
-            });
-
-            if(!result.ok){ 
-                router.push = ({name: "logga_in"}); 
-                return;
-            }
-
-            const data = await result.json();
-            allProducts.value = data.result;
-            
-            return;
-
-        } catch(error) {
-            router.push = ({name: "logga_in"});
-        }
+    //Sending search to child component
+    const searchProduct = (searchTerm) => {
+        product.value = searchTerm;
+        return;
     }
+
 </script>
 
 <style scoped>

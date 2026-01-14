@@ -1,5 +1,4 @@
 <template>
-    <h2 v-if="props.shortcut">Få i lager ({{ productsLength }})</h2>
     <table class="table table-striped">
     <!-- Thead -->
     <thead>
@@ -14,7 +13,7 @@
     </thead>
     <!-- Tbody -->
     <tbody>
-        <tr v-for="product in allProducts" :key="product.product_id">
+        <tr v-for="product in productsList" :key="product.product_id">
             <td>{{product.name}}</td>
             <td>{{product.label}}</td>
             <td v-if="!props.shortcut">{{product.price}}</td>
@@ -29,24 +28,23 @@
 <script setup>
     //Imports
     import { useRouter } from 'vue-router';
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
 
     //Variables
     const router = useRouter();
     const token = localStorage.getItem("token");
     const props = defineProps({
-        shortcut: Boolean
+        shortcut: Boolean,
+        searchTerm: String
     });
 
     //Reactive variables
-    const allProducts = ref({result: []});
-    const productsLength = ref(0);
+    const productsList = ref([]); //Products being displayed
+    const allProducts = ref([]); //Total products
     
     //When view is loaded
     onMounted(()=> {
-
-        if(props.shortcut) fetchLowStock();
-        else loadProducts();
+        loadProducts();
     });
 
     //Fetching all products
@@ -69,7 +67,6 @@
             return data.result;
 
         } catch(error) {
-            console.log(error)
             router.push = ({name: "logga_in"});
         }
     }
@@ -78,22 +75,43 @@
     const loadProducts = async() => {
         const data = await fetchProducts();
         allProducts.value = data;
-    }
 
-    //Filtering products low in stock
-    const fetchLowStock = async() => {
-        const data = await fetchProducts();
-        const lowStock = [];
-
-        for(const product of data) {
-            if(product.amount < 3) lowStock.push(product);
-        }
-
-        allProducts.value = lowStock;
-        productsLength.value = lowStock.length;
+        if(props.shortcut) filterLowStock();
+        else productsList.value = data;
 
         return;
     }
+
+    //Filtering products low in stock
+    const filterLowStock = async() => {
+        const lowStock = [];
+
+        for(const product of allProducts.value) {
+            if(product.amount < 3) lowStock.push(product);
+        }
+
+        productsList.value = lowStock;
+
+        return;
+    }
+
+    //Searching for product
+    const searchProduct = () => {
+
+        //Reseting product list
+        if(props.searchTerm === "") {
+            loadProducts();
+            return;
+        }
+
+        productsList.value = allProducts.value.filter((product) => {
+            return product.name.toLowerCase().includes(props.searchTerm.toLowerCase()) || product.ean_code.toLowerCase().includes(props.searchTerm.toLowerCase());
+        });
+
+    }   
+
+    //Watching searchterm for changes and forcing to execute immidiatley
+    watch(() => props.searchTerm, searchProduct, { immediate: true } );
 
 </script>
 
