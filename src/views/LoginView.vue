@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+    //Imports
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
 
@@ -69,13 +70,10 @@
                 const data = await result.json();
 
                 localStorage.setItem("token", data.result.token);
-                router.push = "/kontrollpanel";
+                router.push = ("/");
 
-                console.log("Inloggad");
-                console.log(data.result.token);
             } else {
                 errorMessage.value = "Felaktigt användarnamn eller lösenord.";
-                console.log(data);
             }
 
         } catch(error) {

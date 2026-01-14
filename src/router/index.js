@@ -41,22 +41,27 @@ const router = createRouter({
 //Authorization of user
 const authUser = () => {
 
+  //Getting token
   const token = localStorage.getItem("token");
 
   if(token) {
+    //Decoding token
     const decodedToken = jwtDecode(token);
 
-    //Comparing current time with expiration time
+    //Comparing current time with token-expiration time
     const currentTime = Date.now();
     const expTime = decodedToken.exp * 1000;
 
-    if(expTime > currentTime) return true;
-    else return false;
+    if(expTime > currentTime) { 
+      return true; 
+    } else { 
+      localStorage.removeItem("token");
+      return false; 
+    }
 
   } else {
     return false;
   }
-
 }
 
 //Redirecting with global nav guard
@@ -66,10 +71,13 @@ router.beforeEach((to, from) => {
 
   if(to.name !== "logga_in" && !canAccess) {
     return "/logga_in";
+
   } else if (to.name === "logga_in" && canAccess) {
     return "/";
+
   } else {
     return;
+    
   }
 });
 

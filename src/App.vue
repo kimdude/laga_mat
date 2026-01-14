@@ -5,7 +5,7 @@
   import Header from'./components/Header.vue';
 
   const childCompLogin = ref(false);
-  const roleAdmin =  false;
+  const roleAdmin =  ref(false);
 
   //Check user role
   const getRole = () => {
