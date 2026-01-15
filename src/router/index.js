@@ -54,12 +54,14 @@ const authUser = () => {
 
     if(expTime > currentTime) { 
       return true; 
+
     } else { 
       localStorage.removeItem("token");
       return false; 
     }
 
   } else {
+    console.log("No token at all")
     return false;
   }
 }
@@ -70,15 +72,16 @@ router.beforeEach((to, from) => {
   const canAccess = authUser();
 
   if(to.name !== "logga_in" && !canAccess) {
-    return "/logga_in";
+    return {name: "logga_in"};  
 
-  } else if (to.name === "logga_in" && canAccess) {
-    return "/";
+  } 
+  
+  if (to.name === "logga_in" && canAccess) {
+    return {name: "kontrollpanel"};
 
-  } else {
-    return;
-    
-  }
+  } 
+
+  return true;
 });
 
 export default router;

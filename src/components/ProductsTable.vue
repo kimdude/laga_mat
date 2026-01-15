@@ -27,11 +27,9 @@
 
 <script setup>
     //Imports
-    import { useRouter } from 'vue-router';
     import { ref, onMounted, watch } from 'vue';
 
     //Variables
-    const router = useRouter();
     const token = localStorage.getItem("token");
     const props = defineProps({
         shortcut: Boolean,
@@ -59,15 +57,14 @@
             });
 
             if(!result.ok){ 
-                router.push = ({name: "logga_in"}); 
-                return;
+                return {name: "logga_in"};
             }
             
             const data = await result.json();
             return data.result;
 
         } catch(error) {
-            router.push = ({name: "logga_in"});
+            return {name: "logga_in"};
         }
     }
 

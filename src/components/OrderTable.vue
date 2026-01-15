@@ -3,7 +3,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Inköp</th>
+                <th scope="col">ID</th>
                 <th scope="col">Datum</th>
                 <th scope="col">Status</th>
             </tr>
@@ -79,16 +79,14 @@
             });
 
             if(!result.ok){ 
-                router.push = ({name: "logga_in"}); 
-                return;
+                return {name: "logga_in"};
             }
 
             const data = await result.json();
             await setData(data);
 
         } catch(error) {
-            router.push = ({name: "logga_in"}); 
-            return;
+            return {name: "logga_in"};
         }
     }
 

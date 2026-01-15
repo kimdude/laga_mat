@@ -18,7 +18,8 @@
             <SearchFilter v-if="displayed === 'searchProduct' || displayed === 'searchOrder'" :parent="searchFor" @find="search"/>
 
             <!-- Low stock products -->
-            <ProductsTable :shortcut="true" :search-term="searchFor"/>
+            <ProductsTable v-if="displayed !== 'searchOrder'" :shortcut="true" :search-term="searchFor"/>
+            <OrderTable v-if="displayed === 'searchOrder'" :shortcut="true" :search-term="searchFor"/>
         </div>
     </section>
 </template>
@@ -28,6 +29,7 @@
     import { ref, onMounted } from 'vue';
     import ProductsTable from '@/components/ProductsTable.vue';
     import SearchFilter from '@/components/SearchFilter.vue';
+    import OrderTable from '@/components/OrderTable.vue';
 
     //Emits
     const emits = defineEmits(['childCompLogin']);

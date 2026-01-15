@@ -5,7 +5,7 @@
             <div class="row align-items-center">
                 <label for="search" class="form-label col-1"></label>
                 <div class="col-8">
-                    <input v-model="search" type="search" id="search" class="form-control" :placeholder="searchEx">
+                    <input v-model="search" type="search" id="search" class="form-control" :placeholder="searchEx" @change="$emit('find', search)">
                 </div>
                 <button class="col-1 btn btn-warning" @click="$emit('find', search)">Sök</button>
             </div>
