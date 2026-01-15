@@ -33,17 +33,23 @@
     const token = localStorage.getItem("token");
     const props = defineProps({
         shortcut: Boolean,
-        searchTerm: String
+        searchTerm: String,
+        filters: Object
     });
 
     //Reactive variables
     const productsList = ref([]); //Products being displayed
     const allProducts = ref([]); //Total products
+    const categories = ref([]);
+    const labels = ref([]);
     
     //When view is loaded
     onMounted(()=> {
         fetchProducts();
     });
+
+    //Emits
+    const emit = defineEmits(["filterOptions"])
 
     //Resetting all products
     const loadProducts = async() => {
@@ -73,6 +79,7 @@
             allProducts.value = data.result;
 
             loadProducts();
+            createFilters();
 
             return;
 
@@ -109,8 +116,45 @@
 
     }   
 
-    //Watching searchterm for changes and forcing to execute immidiatley
-    watch(() => props.searchTerm, searchProduct, { immediate: true } );
+    //Getting categories and labels
+    const createFilters = () => {
+
+        //Getting categories and filtering for duplicates
+        const allCategories = allProducts.value.map((product) => product.category);
+        categories.value = allCategories.filter((category, index) => allCategories.indexOf(category) === index);
+
+        //Getting labels and filtering for duplicates
+        const allLabels = allProducts.value.map((product) => product.label);
+        labels.value = allLabels.filter((label, index) => allLabels.indexOf(label) === index);
+
+        emit("filterOptions", categories, labels);
+    }
+
+    //Filtering products
+    const filter = () => {
+
+        productsList.value = allProducts.value
+
+        //Filtering categories
+        if(props.filters.category !== "") {
+            productsList.value = productsList.value.filter((product, index) => product.category === props.filters.category);
+        }
+
+        //Filtering labels
+        if(props.filters.label !== "") {
+            productsList.value = productsList.value.filter((product, index) => product.label === props.filters.label);
+        }
+
+        //Filtering status
+        if(props.filters.status !== "") {
+            productsList.value = productsList.value.filter((product, index) => product.status=== props.filters.status);
+        }
+
+    }
+
+    //Watchers
+    watch(() => props.searchTerm, searchProduct, { immediate: true } ); //Watching searchterm for changes and forcing to execute immidiatley
+    watch(() => props.filters, filter); //Watching filters for changes
 
 </script>
 

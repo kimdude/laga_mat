@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="order in ordersList.value" :key="order.order_id">
+            <tr v-for="order in ordersList" :key="order.order_id">
                 <td>{{order.order_id}}</td>
                 <td>{{order.date}}</td>
                 <td>{{order.status}}</td>
@@ -29,44 +29,15 @@
     });
 
     //Reference variables
-    const ordersList = ref([]); //Products being displayed
-    const allOrders = ref([]); //Total products
+    const ordersList = ref([]); //Orderss being displayed
+    const allOrders = ref([]); //Total orders
 
     //When view is loaded
     onMounted(()=> {
-        loadOrders();
+        fetchOrders();
     });
 
-    //Formating order-data
-    const setData = async(data) => {
-
-        for(const order of data.result) {
-
-            //Formating status
-            if(order.status === true) order.status = "Levererad";
-            else order.status = "På väg";
-
-            //Formating date
-            const date = new Date(order.date);
-            let year = date.getFullYear();
-            let month = date.getMonth() +1;
-            let day = date.getDate();
-
-            if(month <= 9) month = `0${month}`;
-            if(day <= 9) day = `0${day}`;
-
-            const formatedDate = `${year}-${month}-${day}`;
-
-            order.date = formatedDate;
-
-        }
-
-        allOrders.value = data.result;
-        return;
-
-    }
-
-    //Getting all orders
+    //Fetching all orders
     const fetchOrders = async() => {
         try {
             const result = await fetch("https://dt193g-projekt.onrender.com/orders", {
@@ -82,8 +53,31 @@
             }
 
             const data = await result.json();
-            await setData(data);
+            allOrders.value = data.result;
 
+            //Formatting dates and status
+            for(const order of allOrders.value) {
+
+                //Formating status
+                if(order.status === true) order.status = "Levererad";
+                else order.status = "På väg";
+
+                //Formating date
+                const date = new Date(order.date);
+                let year = date.getFullYear();
+                let month = date.getMonth() +1;
+                let day = date.getDate();
+
+                if(month <= 9) month = `0${month}`;
+                if(day <= 9) day = `0${day}`;
+
+                const formatedDate = `${year}-${month}-${day}`;
+
+                order.date = formatedDate;
+
+            }
+
+            await loadOrders();
             return;
 
         } catch(error) {
@@ -93,8 +87,10 @@
 
     //Displaying all products
     const loadOrders = async() => {
-        await fetchOrders();
-        ordersList.value = allOrders
+
+        //Setting lists of orders
+        ordersList.value = allOrders.value;
+        return;
     }
 
     //Searching for order
@@ -107,7 +103,7 @@
         }
 
         ordersList.value = allOrders.value.filter((order) => {
-            return order.order_id.includes(props.searchTerm);
+            return order.order_id.toString().includes(props.searchTerm);
         });
 
     }   

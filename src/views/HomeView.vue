@@ -45,14 +45,7 @@
 
     //Sending search to child component
     const search = (searchTerm) => {
-
-        if(displayed.value === "searchProduct") {
-            console.log("Söker produkt..")
-            searchFor.value = searchTerm;
-            return;
-        } else {
-            console.log("under utveckling...")
-        }
+        searchFor.value = searchTerm;
     }
 
 

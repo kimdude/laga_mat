@@ -61,7 +61,6 @@ const authUser = () => {
     }
 
   } else {
-    console.log("No token at all")
     return false;
   }
 }
