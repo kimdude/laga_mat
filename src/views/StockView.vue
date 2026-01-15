@@ -8,13 +8,16 @@
         <div class="container-float">
             <div class="row">
                 <h2 class="col">Lager</h2>
-                <img src="../assets/images/plus_icon.svg" class="col-1 p-1" title="Lägg till produkt" @click="addProduct">
+                <img src="../assets/images/plus_icon.svg" class="col-1 p-1" title="Lägg till produkt" @click="toggleAddProduct">
                 <img src="../assets/images/filter_icon.svg" class="col-1 p-1" title="Filtrera produkter" @click="toggleFilter">   
             </div>
         </div>
 
         <!-- Filters -->        
-        <ProductsFilter v-if="displayFilters" class="my-4" :category-values="categorySelect" :label-values="labelSelect" @user-filters="filter"/>
+        <ProductsFilter v-if="displayFilters" class="my-4 pt-2 pb-3" :category-values="categorySelect" :label-values="labelSelect" @user-filters="filter"/>
+
+        <!-- Form to add product -->
+         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3"/>
 
         <!-- All products -->
         <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter"/>
@@ -27,10 +30,12 @@
     import ProductsTable from '@/components/ProductsTable.vue';
     import SearchFilter from '@/components/SearchFilter.vue';
     import ProductsFilter from '@/components/ProductsFilter.vue';
+    import ProductForm from '@/components/ProductForm.vue';
 
     //Reactive variables
     const product = ref("");
     const displayFilters = ref(false);
+    const displayAdd = ref(false);
     const categorySelect = ref([]);
     const labelSelect = ref([]);
     const userFilter = ref({
@@ -50,12 +55,23 @@
         console.log("Lägg till produkt är under utveckling...");
     }
 
-    //Filtering products
+    //Toggling filter
     const toggleFilter = () => {
         if(displayFilters.value === false) {
             displayFilters.value = true;
+            displayAdd.value = false;
         } else {
-            displayFilters.value = false
+            displayFilters.value = false;
+        }
+    }
+
+    //Toggling add product
+    const toggleAddProduct = () => {
+        if(displayAdd.value === false) {
+            displayAdd.value = true;
+            displayFilters.value = false;
+        } else {
+            displayAdd.value = false;
         }
     }
 

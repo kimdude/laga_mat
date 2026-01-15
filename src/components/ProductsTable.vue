@@ -198,5 +198,7 @@
 </script>
 
 <style scoped>
-    
+    th:hover {
+        cursor: pointer;
+    }
 </style>

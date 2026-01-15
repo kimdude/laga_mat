@@ -18,7 +18,7 @@
             </label>
         </div>
         <!-- Error message -->
-        <p>{{ errorMessage }}</p>
+        <p v-if="errorMessage !== ''" class="alert alert-warning" role="alert">{{ errorMessage }}</p>
         <!-- Submit btn -->
         <button type="submit" class="btn btn-info mt-4 float-end">Logga in</button>
     </form>

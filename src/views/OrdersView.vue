@@ -7,7 +7,7 @@
         <div class="container-float">
             <div class="row">
                 <h2 class="col">Inköp</h2>
-                <img src="../assets/images/filter_icon.svg" class="col-1 p-1" title="Sortera efter" >   <!-- BYT UT MOT VAGN -->
+                <img src="../assets/images/cart_icon.svg" class="col-1 p-1" title="Gör inköp">
             </div>
         </div>
 
@@ -27,12 +27,11 @@
         order.value = searchTerm;
         return;
     }
-    
 </script>
 
 <style scoped>
     img {
-        width: 35px;
+        width: 45px;
     }
 
     img:hover {
