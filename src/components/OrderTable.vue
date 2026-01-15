@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="order in allOrders" :key="order.order_id">
+            <tr v-for="order in ordersList.value" :key="order.order_id">
                 <td>{{order.order_id}}</td>
                 <td>{{order.date}}</td>
                 <td>{{order.status}}</td>
@@ -20,22 +20,21 @@
 
 <script setup>
     //Imports
-    import { useRouter } from 'vue-router';
-    import { ref, onMounted } from 'vue';
+    import { watch, ref, onMounted } from 'vue';
 
     //Variables
-    const router = useRouter();
     const token = localStorage.getItem("token");
     const props = defineProps({
         searchTerm: String
     });
 
     //Reference variables
-    let allOrders = ref({result: []});                    
+    const ordersList = ref([]); //Products being displayed
+    const allOrders = ref([]); //Total products
 
     //When view is loaded
     onMounted(()=> {
-        fetchOrders();
+        loadOrders();
     });
 
     //Formating order-data
@@ -85,9 +84,35 @@
             const data = await result.json();
             await setData(data);
 
+            return;
+
         } catch(error) {
             return {name: "logga_in"};
         }
     }
+
+    //Displaying all products
+    const loadOrders = async() => {
+        await fetchOrders();
+        ordersList.value = allOrders
+    }
+
+    //Searching for order
+    const searchOrder = () => {
+
+        //Reseting product list
+        if(props.searchTerm === "") {
+            loadOrders();
+            return;
+        }
+
+        ordersList.value = allOrders.value.filter((order) => {
+            return order.order_id.includes(props.searchTerm);
+        });
+
+    }   
+
+    //Watching searchterm for changes and forcing to execute immidiatley
+    watch(() => props.searchTerm, searchOrder, { immediate: true } );
 
 </script>

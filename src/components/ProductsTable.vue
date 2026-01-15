@@ -42,8 +42,17 @@
     
     //When view is loaded
     onMounted(()=> {
-        loadProducts();
+        fetchProducts();
     });
+
+    //Resetting all products
+    const loadProducts = async() => {
+
+        if(props.shortcut) filterLowStock();
+        else productsList.value = allProducts.value;
+
+        return;
+    }
 
     //Fetching all products
     const fetchProducts = async() => {
@@ -61,26 +70,19 @@
             }
             
             const data = await result.json();
-            return data.result;
+            allProducts.value = data.result;
+
+            loadProducts();
+
+            return;
 
         } catch(error) {
             return {name: "logga_in"};
         }
     }
 
-    //Displaying all products
-    const loadProducts = async() => {
-        const data = await fetchProducts();
-        allProducts.value = data;
-
-        if(props.shortcut) filterLowStock();
-        else productsList.value = data;
-
-        return;
-    }
-
     //Filtering products low in stock
-    const filterLowStock = async() => {
+    const filterLowStock = () => {
         const lowStock = [];
 
         for(const product of allProducts.value) {
