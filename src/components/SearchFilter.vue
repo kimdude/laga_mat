@@ -1,5 +1,4 @@
 <template>
-    
         <!-- Search bar -->
         <div class="container mb-4 pb-4">
             <div class="row align-items-center">

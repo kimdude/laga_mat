@@ -3,7 +3,13 @@
     <section class="p-4 mx-4">
         <SearchFilter parent="orders" @find="searchOrder"/>
 
-        <h2>Alla inköp</h2>
+        <!-- Button for order-list/shopping cart -->
+        <div class="container-float">
+            <div class="row">
+                <h2 class="col">Inköp</h2>
+                <img src="../assets/images/filter_icon.svg" class="col-1 p-1" title="Sortera efter" >   <!-- BYT UT MOT VAGN -->
+            </div>
+        </div>
 
         <OrderTable class="my-4" :searchTerm="order"/>
     </section>
@@ -25,5 +31,11 @@
 </script>
 
 <style scoped>
-    
+    img {
+        width: 35px;
+    }
+
+    img:hover {
+        cursor: pointer;
+    }
 </style>

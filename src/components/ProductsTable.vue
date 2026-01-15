@@ -3,11 +3,11 @@
     <!-- Thead -->
     <thead>
         <tr>
-            <th scope="col">Produkt</th>
-            <th scope="col">Märke</th>
-            <th scope="col" v-if="!props.shortcut">Pris</th>
-            <th scope="col" v-if="!props.shortcut">Lager&shy;status</th>
-            <th scope="col">Antal</th>
+            <th scope="col" @click="sort('product')">Produkt</th>
+            <th scope="col" @click="sort('label')">Märke</th>
+            <th scope="col" v-if="!props.shortcut" @click="sort('price')">Pris</th>
+            <th scope="col" v-if="!props.shortcut" @click="sort('status')">Lager&shy;status</th>
+            <th scope="col" @click="sort('amount')">Antal</th>
             <th v-if="props.shortcut">Beställ fler</th>
         </tr>
     </thead>
@@ -150,6 +150,45 @@
             productsList.value = productsList.value.filter((product, index) => product.status=== props.filters.status);
         }
 
+    }
+
+    //Sort products
+    const sort = (sortValue) => {
+
+        //Sorting by name
+        if(sortValue === "product") {
+            productsList.value.sort((a,b) => {
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        //Sorting by label
+        if(sortValue === "label") {
+            productsList.value.sort((a,b) => {
+                return a.label.localeCompare(b.label);
+            });
+        }
+
+        //Sorting by status                         FUNKAR EJ ATM
+        if(sortValue === "status") {
+            productsList.value.sort((a,b) => {
+                return a.status.localeCompare(b.status);
+            });
+        }
+
+        //Sorting by price
+        if(sortValue === "price") {
+            productsList.value.sort((a,b) => {
+                return a.price - b.price;
+            });
+        }
+
+        //Sorting by amount
+        if(sortValue === "amount") {
+            productsList.value.sort((a,b) => {
+                return a.amount - b.amount;
+            });
+        }
     }
 
     //Watchers

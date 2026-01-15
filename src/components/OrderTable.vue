@@ -3,9 +3,9 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Datum</th>
-                <th scope="col">Status</th>
+                <th scope="col" @click="sort('id')">ID</th>
+                <th scope="col" @click="sort('date')">Datum</th>
+                <th scope="col" @click="sort('status')">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -77,6 +77,11 @@
 
             }
 
+            //Sorting orders from most recent to oldest orders
+            allOrders.value.sort((a,b) => { 
+                return a.date.localeCompare(b.date);
+            }).reverse();
+
             await loadOrders();
             return;
 
@@ -108,7 +113,38 @@
 
     }   
 
+    //Sort list
+    const sort = (sortValue) => {
+
+        //Sorting by status
+        if(sortValue === "status") {
+            ordersList.value.sort((a,b) => { 
+                return a.status.localeCompare(b.status);
+            });
+        }
+
+        //Sorting by date                                               TRIPPLE-CHECK WHEN MORE ORDERS ARE ADDED
+        if(sortValue === "date") {
+            ordersList.value.sort((a,b) => { 
+                return a.date.localeCompare(b.date);
+            }).reverse();
+        } 
+
+        //Sorting by id
+        if(sortValue === "id") {
+            ordersList.value.sort((a,b) => { 
+                return a.order_id - b.order_id;
+            });
+        }
+    }
+
     //Watching searchterm for changes and forcing to execute immidiatley
     watch(() => props.searchTerm, searchOrder, { immediate: true } );
 
 </script>
+
+<style scoped>
+    th:hover {
+        cursor: pointer;
+    }
+</style>
