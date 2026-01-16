@@ -6,19 +6,22 @@ const token = localStorage.getItem("token");
 export default {
 
     //Fetching all orders
-    async fetchOrder() {
+    async fetchOrders() {
         try {
             const result = await fetch("https://dt193g-projekt.onrender.com/orders", {
                 method: "GET",
                 headers: {
                     "content-type": "application/json",
-                    "authorization": "Bearer: " + token
+                    "authorization": "Bearer " + token
                 }
             });
 
             if(!result.ok){
                 throw new Error;
             }
+
+            const data = await result.json();
+            return data;
 
 
         } catch(error) {
@@ -27,13 +30,13 @@ export default {
     },
 
     //Fetching specific order
-    async fetchOrder(id) {
+    async fetchOrder(type, id) {
         try {
-            const result = await fetch("https://dt193g-projekt.onrender.com/orders/" + id, {
+            const result = await fetch("https://dt193g-projekt.onrender.com/orders/order?" + type + "=" + id, {
                 method: "GET",
                 headers: {
                     "content-type": "application/json",
-                    "authorization": "Bearer: " + token
+                    "authorization": "Bearer " + token
                 }
             });
 
@@ -41,6 +44,8 @@ export default {
                 throw new Error;
             }
 
+            const data = await result.json();
+            return data.result;
 
         } catch(error) {
             console.log(error);

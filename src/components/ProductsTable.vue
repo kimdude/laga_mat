@@ -36,7 +36,7 @@
             </td>
             <td v-if="updatingStock === product.product_id">
                 <!-- Button to update -->
-                <button class="btn btn-warning" @click="updateStock(product.product_id)">L</button>
+                <button class="btn btn-warning" @click="updateStock(product.product_id, product.status, product.amount)">Uppdatera</button>
             </td>
             <td v-if="props.shortcut">
                 <button class="btn btn-warning">Beställ</button>
@@ -204,7 +204,9 @@
     }
 
     //Updating amount and status
-    const updateStock = async(id) => {
+    const updateStock = async(id, oldAmount, oldStatus) => {
+
+        if(amountInp.value === oldAmount && statusInp.value === oldStatus) return;
 
         if(amountInp.value === 0 && statusInp.value === "I lager") {
             statusInp.value = "Slut";
