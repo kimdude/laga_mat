@@ -60,13 +60,18 @@
 
 <script setup>
     import { ref, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
 
     onMounted(() => {
         fetchShelfs();
     })
+
+    //Emits
+    const emit = defineEmits(["addedProduct"]);
     
     //Variables
     const token = localStorage.getItem("token");
+    const router = useRouter();
 
     //Form inputs
     const nameInp = ref("");
@@ -96,7 +101,7 @@
             });
 
             if(!result.ok) {
-                return {name: "logga_in"}
+                router.push({name: "logga_in"});
             }
 
             const data = await result.json();
@@ -105,7 +110,7 @@
             return;
 
         } catch(error) {
-            return {name: "logga_in"}
+            router.push({name: "logga_in"});
         }
     }
 
@@ -132,7 +137,6 @@
 
         if(codeInp.value.length < 8 || codeInp.value.length > 13 ) return errorMessage.value = "EAN-kod måste vara mellan 8-13 siffror.";
 
-
         //Setting status
         if(amountInp.value > 0) status.value = "I lager";
         else status.value = "Slut";
@@ -149,8 +153,6 @@
             shelf_id: shelfInp.value
         };
 
-        console.log(newProduct)
-
         //Fetch API
         try{
             const result = await fetch("https://dt193g-projekt.onrender.com/products", {
@@ -163,20 +165,18 @@
             });
 
             if(!result.ok) {
-                throw new Error;
-                /* return {name: "logga_in"} */
+                router.push({name: "logga_in"});            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
             }
 
             const data = await result.json();
             shelfs.value = data.result;
 
-            //TRIGGA EN EMIT ATT PRODUKT LAGTS TILL, SKAPA CONFIRM MEDDELANDE I PARENT OCH TRIGGA LOADPRODUCTS GENOM PARENT
+            emit("addedProduct");
 
             return;
 
         } catch(error) {
-            console.log(error)
-            /* return {name: "logga_in"} */
+            router.push({name: "logga_in"});
         }
     }
 

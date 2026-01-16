@@ -1,6 +1,9 @@
 <template>
     <!-- Alla produkter -->
     <section class="p-4 mx-4">
+        <!-- Confimation -->
+        <div v-if="confirmMessage !== ''" class="alert alert-warning position-absolute top-50 start-50 translate-middle" role="alert"> {{ confirmMessage }}</div>
+
         <!-- Search bar -->
         <SearchFilter parent="products" @find="searchProduct"/>
 
@@ -17,7 +20,7 @@
         <ProductsFilter v-if="displayFilters" class="my-4 pt-2 pb-3" :category-values="categorySelect" :label-values="labelSelect" @user-filters="filter"/>
 
         <!-- Form to add product -->
-         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3"/>
+         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList"/>
 
         <!-- All products -->
         <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter"/>
@@ -38,6 +41,7 @@
     const displayAdd = ref(false);
     const categorySelect = ref([]);
     const labelSelect = ref([]);
+    const confirmMessage = ref("");
     const userFilter = ref({
         category: "",
         label: "",
@@ -48,11 +52,6 @@
     const searchProduct = (searchTerm) => {
         product.value = searchTerm;
         return;
-    }
-
-    //Adding product
-    const addProduct = () => {
-        console.log("Lägg till produkt är under utveckling...");
     }
 
     //Toggling filter
@@ -85,6 +84,14 @@
     const filter = (category, label, status) => {
         userFilter.value = { category, label, status }
         toggleFilter();
+    }
+
+    //Setting confirm message when product added
+    const refreshList = () => {
+        confirmMessage.value = "Produkt tillagd!";
+        setTimeout(() => confirmMessage.value = "", 5000);
+
+        toggleAddProduct();
     }
 
 </script>

@@ -71,12 +71,15 @@ router.beforeEach((to, from) => {
   const canAccess = authUser();
 
   if(to.name !== "logga_in" && !canAccess) {
-    return {name: "logga_in"};  
+    return {
+      path: "/logga_in",
+      query: { redirect: to.fullPath }
+    };  
 
   } 
   
   if (to.name === "logga_in" && canAccess) {
-    return {name: "kontrollpanel"};
+    return { path: "/" };
 
   } 
 

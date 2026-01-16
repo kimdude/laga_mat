@@ -28,6 +28,7 @@
 <script setup>
     //Imports
     import { ref, onMounted, watch } from 'vue';
+    import { useRouter } from 'vue-router';
 
     //Variables
     const token = localStorage.getItem("token");
@@ -36,6 +37,9 @@
         searchTerm: String,
         filters: Object
     });
+
+    //Variables
+    const router = useRouter();
 
     //Reactive variables
     const productsList = ref([]); //Products being displayed
@@ -72,7 +76,7 @@
             });
 
             if(!result.ok){ 
-                return {name: "logga_in"};
+                router.push({name: "logga_in"});
             }
             
             const data = await result.json();
@@ -84,7 +88,7 @@
             return;
 
         } catch(error) {
-            return {name: "logga_in"};
+            router.push({name: "logga_in"});
         }
     }
 

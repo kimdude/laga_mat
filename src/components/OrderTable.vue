@@ -21,8 +21,10 @@
 <script setup>
     //Imports
     import { watch, ref, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
 
     //Variables
+    const router = useRouter();
     const token = localStorage.getItem("token");
     const props = defineProps({
         searchTerm: String
@@ -49,7 +51,7 @@
             });
 
             if(!result.ok){ 
-                return {name: "logga_in"};
+                router.push({name: "logga_in"});
             }
 
             const data = await result.json();
@@ -86,7 +88,7 @@
             return;
 
         } catch(error) {
-            return {name: "logga_in"};
+            router.push({name: "logga_in"});
         }
     }
 
