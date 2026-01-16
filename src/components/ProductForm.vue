@@ -133,7 +133,7 @@
         //Calling API
         await StockService.addProduct(newProduct);
 
-        emit("addedProduct");
+        emit("addedProduct", "Produkt tillagd");
     }
 
 </script>

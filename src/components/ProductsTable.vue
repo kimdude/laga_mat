@@ -8,18 +8,39 @@
             <th scope="col" v-if="!props.shortcut" @click="sort('price')">Pris</th>
             <th scope="col" v-if="!props.shortcut" @click="sort('status')">Lager&shy;status</th>
             <th scope="col" @click="sort('amount')">Antal</th>
-            <th v-if="props.shortcut">Beställ fler</th>
+            <th scope="col" v-if="props.shortcut"></th>
         </tr>
     </thead>
     <!-- Tbody -->
     <tbody>
-        <tr v-for="product in productsList" :key="product.product_id" @click="$emit('productId', product.product_id)" data-bs-toggle="modal" data-bs-target="#product-details">
-            <td>{{product.name}}</td>
-            <td>{{product.label}}</td>
-            <td v-if="!props.shortcut">{{product.price}}</td>
-            <td v-if="!props.shortcut">{{product.status}}</td>
-            <td>{{product.amount}}</td>
-            <td v-if="props.shortcut"><button class="btn btn-warning">Beställ</button></td>
+        <tr v-for="product in productsList" :key="product.product_id">
+            <td data-bs-toggle="modal" data-bs-target="#product-details" @click="$emit('productId', product.product_id)">{{product.name}}</td>
+            <td data-bs-toggle="modal" data-bs-target="#product-details" @click="$emit('productId', product.product_id)">{{product.label}}</td>
+            <td data-bs-toggle="modal" data-bs-target="#product-details" @click="$emit('productId', product.product_id)" v-if="!props.shortcut">{{product.price}}</td>
+            <td v-if="!props.shortcut">
+                <span v-if="updatingStock !== product.product_id" @click="updateInputs(product.product_id, product.status, product.amount)">{{product.status}}</span>
+
+                <!-- Input to update status-->
+                <select v-if="updatingStock === product.product_id" v-model="statusInp" class="form-select form-select-sm" id="statusInp">
+                    <option value="I lager">I lager</option>
+                    <option value="Beställd">Beställd</option>
+                    <option value="Slut">Slut</option>
+                </select>
+            </td>
+            <td>
+                <span v-if="updatingStock !== product.product_id" @click="updateInputs(product.product_id, product.status, product.amount)">{{product.amount}}</span>
+
+                <!-- Input to update amount-->
+                <input v-if="updatingStock === product.product_id" v-model.number="amountInp" type="number" class="form-control form-control-sm" placeholder="Antal i lager" id="amountInp" aria-label="Antal i lager">
+           
+            </td>
+            <td v-if="updatingStock === product.product_id">
+                <!-- Button to update -->
+                <button class="btn btn-warning" @click="updateStock(product.product_id)">L</button>
+            </td>
+            <td v-if="props.shortcut">
+                <button class="btn btn-warning">Beställ</button>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -42,10 +63,13 @@
     const allProducts = ref([]); //Total products
     const categories = ref([]);
     const labels = ref([]);
+    const statusInp= ref("");
+    const amountInp = ref(null);
+    const updatingStock = ref(null);
     
     //When view is loaded
     onMounted(()=> {
-        fetchProducts();
+        getProducts();
     });
 
     //Emits
@@ -60,8 +84,8 @@
         return;
     }
 
-    //Fetching all products
-    const fetchProducts = async() => {
+    //Getting all products
+    const getProducts = async() => {
         const products = await StockService.fetchProducts();
         allProducts.value = products;
 
@@ -172,6 +196,36 @@
         }
     }
 
+    //Setting inputs to update status and amount
+    const updateInputs = async(id, status, amount) => {
+        updatingStock.value = id;
+        statusInp.value = status;
+        amountInp.value = amount;
+    }
+
+    //Updating amount and status
+    const updateStock = async(id) => {
+
+        if(amountInp.value === 0 && statusInp.value === "I lager") {
+            statusInp.value = "Slut";
+        }
+
+        if(amountInp.value > 0 && statusInp.value === "Slut") {
+            statusInp.value = "I lager";
+        }
+
+        updatingStock.value = null;
+
+        const updatedProduct = {
+            status: statusInp.value,
+            amount: amountInp.value
+        }
+
+        await StockService.updateStock(updatedProduct, id);
+        getProducts();
+
+    }
+
     //Watchers
     watch(() => props.searchTerm, searchProduct, { immediate: true } ); //Watching searchterm for changes and forcing to execute immidiatley
     watch(() => props.filters, filter); //Watching filters for changes
@@ -179,7 +233,7 @@
 </script>
 
 <style scoped>
-    th:hover {
+    th:hover, tr:hover {
         cursor: pointer;
     }
 </style>

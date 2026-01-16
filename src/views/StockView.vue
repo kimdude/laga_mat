@@ -7,7 +7,7 @@
         <!-- Product details -->
         <div class="modal" id="product-details">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct"/>
+                <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct" @removed-product="refreshList('Produkt borttagen')"/>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
         <ProductsFilter v-if="displayFilters" class="my-4 pt-2 pb-3" :category-values="categorySelect" :label-values="labelSelect" @user-filters="filter"/>
 
         <!-- Form to add product -->
-         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList"/>
+         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList('Produkt tillagd')"/>
 
         <!-- All products -->
         <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter" @product-id="showProduct"/>
@@ -95,12 +95,14 @@
         toggleFilter();
     }
 
-    //Setting confirm message when product added
-    const refreshList = () => {
-        confirmMessage.value = "Produkt tillagd!";
+    //Setting confirm message when product added or deleted
+    const refreshList = (message) => {
+
+        confirmMessage.value = message;
         setTimeout(() => confirmMessage.value = "", 5000);
 
-        toggleAddProduct();
+        if(message === "Produkt borttagen") showProduct(null);
+        else toggleAddProduct();
     }
 
     //Setting product id to display product

@@ -1,5 +1,6 @@
 'use strict'
 
+
 //Token
 const token = localStorage.getItem("token");
 
@@ -69,7 +70,7 @@ export default {
             });
 
             if(!result.ok) {
-                router.push({name: "logga_in"});            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
+                throw new Error            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
             }
 
             const data = await result.json();
@@ -77,7 +78,81 @@ export default {
             return data.result;
 
         } catch(error) {
-            router.push({name: "logga_in"});
+            console.log(error)
+        }
+    },
+
+    //Update product
+    async updateProduct(updatedProduct, id) {
+        try{
+            const result = await fetch("https://dt193g-projekt.onrender.com/products/" + id, {
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": "Bearer " + token
+                },
+                body: JSON.stringify(updatedProduct)
+            });
+
+            if(!result.ok) {
+                throw new Error            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
+            }
+
+            const data = await result.json();
+
+            return data.result;
+
+        } catch(error) {
+            console.log(error)
+        }
+    },
+
+    //Update stock
+    async updateStock(updatedStock, id) {
+        try{
+            const result = await fetch("https://dt193g-projekt.onrender.com/products/" + id + "/stock", {
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": "Bearer " + token
+                },
+                body: JSON.stringify(updatedStock)
+            });
+
+            if(!result.ok) {
+                throw new Error            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
+            }
+
+            const data = await result.json();
+
+            return data.result;
+
+        } catch(error) {
+            console.log(error)
+        }
+    },
+
+    //Update stock
+    async deleteProduct(id) {
+        try{
+            const result = await fetch("https://dt193g-projekt.onrender.com/products/" + id, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+            if(!result.ok) {
+                throw new Error;            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
+            }
+
+            const data = await result.json();
+
+            return data;
+
+        } catch(error) {
+            console.log(error)
         }
     },
 

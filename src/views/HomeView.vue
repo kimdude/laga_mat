@@ -1,4 +1,14 @@
 <template>
+    <!-- Confimation -->
+    <div v-if="confirmMessage !== ''" class="alert alert-warning position-absolute top-50 start-50 translate-middle" role="alert"> {{ confirmMessage }}</div>
+
+    <!-- Product details -->
+    <div class="modal" id="product-details">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct" @removed-product="refreshList('Produkt borttagen')"/>
+        </div>
+    </div>
+
     <!-- Genvägar -->
     <section class="p-4 mx-2">
         <h1 class="text-center mt-4">Välkommen!</h1>
@@ -18,7 +28,7 @@
             <SearchFilter v-if="displayed === 'searchProduct' || displayed === 'searchOrder'" :parent="searchFor" @find="search"/>
 
             <!-- Low stock products -->
-            <ProductsTable v-if="displayed !== 'searchOrder'" :shortcut="true" :search-term="searchFor"/>
+            <ProductsTable v-if="displayed !== 'searchOrder'" :shortcut="true" :search-term="searchFor" @product-id="showProduct"/>
             <OrderTable v-if="displayed === 'searchOrder'" :shortcut="true" :search-term="searchFor"/>
         </div>
     </section>
@@ -30,6 +40,7 @@
     import ProductsTable from '@/components/ProductsTable.vue';
     import SearchFilter from '@/components/SearchFilter.vue';
     import OrderTable from '@/components/OrderTable.vue';
+    import ProductItem from '@/components/ProductItem.vue';
 
     //Emits
     const emits = defineEmits(['childCompLogin']);
@@ -38,6 +49,8 @@
     const title = ref("Få i lager");
     const displayed = ref("lowStock");
     const searchFor = ref("");
+    const productId = ref(null);
+    const confirmMessage = ref("");
 
     onMounted(() => {
         emits('childCompLogin', false);
@@ -66,6 +79,17 @@
             displayed.value = "lowStock";
             searchFor.value = "";
         }
+    }
+
+    const refreshList = (message) => {
+        confirmMessage.value = message;
+        setTimeout(() => confirmMessage.value = "", 5000);
+
+        showProduct(null);
+    }
+
+    const showProduct = (id) => {
+        productId.value = id;
     }
 
 </script>
