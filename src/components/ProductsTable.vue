@@ -13,7 +13,7 @@
     </thead>
     <!-- Tbody -->
     <tbody>
-        <tr v-for="product in productsList" :key="product.product_id">
+        <tr v-for="product in productsList" :key="product.product_id" @click="$emit('productId', product.product_id)" data-bs-toggle="modal" data-bs-target="#product-details">
             <td>{{product.name}}</td>
             <td>{{product.label}}</td>
             <td v-if="!props.shortcut">{{product.price}}</td>
@@ -28,18 +28,14 @@
 <script setup>
     //Imports
     import { ref, onMounted, watch } from 'vue';
-    import { useRouter } from 'vue-router';
+    import StockService from '@/services/StockService';
 
     //Variables
-    const token = localStorage.getItem("token");
     const props = defineProps({
         shortcut: Boolean,
         searchTerm: String,
         filters: Object
     });
-
-    //Variables
-    const router = useRouter();
 
     //Reactive variables
     const productsList = ref([]); //Products being displayed
@@ -53,7 +49,7 @@
     });
 
     //Emits
-    const emit = defineEmits(["filterOptions"])
+    const emit = defineEmits(["filterOptions", "productId"])
 
     //Resetting all products
     const loadProducts = async() => {
@@ -66,30 +62,11 @@
 
     //Fetching all products
     const fetchProducts = async() => {
-        try {
-            const result = await fetch("https://dt193g-projekt.onrender.com/products", {
-                method: "GET",
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": "Bearer " + token
-                }
-            });
+        const products = await StockService.fetchProducts();
+        allProducts.value = products;
 
-            if(!result.ok){ 
-                router.push({name: "logga_in"});
-            }
-            
-            const data = await result.json();
-            allProducts.value = data.result;
-
-            loadProducts();
-            createFilters();
-
-            return;
-
-        } catch(error) {
-            router.push({name: "logga_in"});
-        }
+        loadProducts();
+        createFilters();
     }
 
     //Filtering products low in stock
@@ -137,7 +114,7 @@
     //Filtering products
     const filter = () => {
 
-        productsList.value = allProducts.value
+        productsList.value = allProducts.value;
 
         //Filtering categories
         if(props.filters.category !== "") {
@@ -173,7 +150,7 @@
             });
         }
 
-        //Sorting by status                         FUNKAR EJ ATM
+        //Sorting by status                      
         if(sortValue === "status") {
             productsList.value.sort((a,b) => {
                 return a.status.localeCompare(b.status);

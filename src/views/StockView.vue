@@ -4,6 +4,13 @@
         <!-- Confimation -->
         <div v-if="confirmMessage !== ''" class="alert alert-warning position-absolute top-50 start-50 translate-middle" role="alert"> {{ confirmMessage }}</div>
 
+        <!-- Product details -->
+        <div class="modal" id="product-details">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct"/>
+            </div>
+        </div>
+
         <!-- Search bar -->
         <SearchFilter parent="products" @find="searchProduct"/>
 
@@ -23,7 +30,7 @@
          <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList"/>
 
         <!-- All products -->
-        <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter"/>
+        <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter" @product-id="showProduct"/>
     </section>
 </template>
 
@@ -34,9 +41,11 @@
     import SearchFilter from '@/components/SearchFilter.vue';
     import ProductsFilter from '@/components/ProductsFilter.vue';
     import ProductForm from '@/components/ProductForm.vue';
+    import ProductItem from '@/components/ProductItem.vue';
 
     //Reactive variables
     const product = ref("");
+    const productId= ref(null);
     const displayFilters = ref(false);
     const displayAdd = ref(false);
     const categorySelect = ref([]);
@@ -92,6 +101,11 @@
         setTimeout(() => confirmMessage.value = "", 5000);
 
         toggleAddProduct();
+    }
+
+    //Setting product id to display product
+    const showProduct = (id) => {
+        productId.value = id;
     }
 
 </script>

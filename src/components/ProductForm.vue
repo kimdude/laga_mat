@@ -60,19 +60,15 @@
 
 <script setup>
     import { ref, onMounted } from 'vue';
-    import { useRouter } from 'vue-router';
+    import StockService from '@/services/StockService';
 
     onMounted(() => {
-        fetchShelfs();
+        getShelfs();
     })
 
     //Emits
     const emit = defineEmits(["addedProduct"]);
     
-    //Variables
-    const token = localStorage.getItem("token");
-    const router = useRouter();
-
     //Form inputs
     const nameInp = ref("");
     const labelInp = ref("");
@@ -89,29 +85,10 @@
     //Reactive variables (more)
     const shelfs = ref([]);
 
-    //Fetching shelfs
-    const fetchShelfs = async() => {
-        try{
-            const result = await fetch("https://dt193g-projekt.onrender.com/shelfs", {
-                method: "GET",
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": "Bearer " + token
-                }
-            });
-
-            if(!result.ok) {
-                router.push({name: "logga_in"});
-            }
-
-            const data = await result.json();
-            shelfs.value = data.result;
-
-            return;
-
-        } catch(error) {
-            router.push({name: "logga_in"});
-        }
+    //Getting all shelfs
+    const getShelfs = async() => {
+        const shelfOptions = await StockService.fetchShelfs();
+        shelfs.value = shelfOptions;
     }
 
     //Adding product
@@ -153,31 +130,10 @@
             shelf_id: shelfInp.value
         };
 
-        //Fetch API
-        try{
-            const result = await fetch("https://dt193g-projekt.onrender.com/products", {
-                method: "POST",
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": "Bearer " + token
-                },
-                body: JSON.stringify(newProduct)
-            });
+        //Calling API
+        await StockService.addProduct(newProduct);
 
-            if(!result.ok) {
-                router.push({name: "logga_in"});            //ÄNDRA TILL KONTROLL FÖR LÄNGDE PÅ INPUTS ETC
-            }
-
-            const data = await result.json();
-            shelfs.value = data.result;
-
-            emit("addedProduct");
-
-            return;
-
-        } catch(error) {
-            router.push({name: "logga_in"});
-        }
+        emit("addedProduct");
     }
 
 </script>

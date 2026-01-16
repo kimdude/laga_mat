@@ -71,7 +71,7 @@
 
                 localStorage.setItem("token", data.result.token);
 
-                router.push({name: "kontrollpanelen"});
+                router.push({name: "kontrollpanel"});
 
             } else {
                 errorMessage.value = "Felaktigt användarnamn eller lösenord.";
