@@ -84,6 +84,7 @@ export default {
 
     //Update product
     async updateProduct(updatedProduct, id) {
+
         try{
             const result = await fetch("https://dt193g-projekt.onrender.com/products/" + id, {
                 method: "PUT",
@@ -109,6 +110,7 @@ export default {
 
     //Update stock
     async updateStock(updatedStock, id) {
+
         try{
             const result = await fetch("https://dt193g-projekt.onrender.com/products/" + id + "/stock", {
                 method: "PUT",

@@ -115,6 +115,7 @@
             return;
         }
 
+        //Filtering
         productsList.value = allProducts.value.filter((product) => {
             return product.name.toLowerCase().includes(props.searchTerm.toLowerCase()) || product.ean_code.toLowerCase().includes(props.searchTerm.toLowerCase());
         });
@@ -132,6 +133,7 @@
         const allLabels = allProducts.value.map((product) => product.label);
         labels.value = allLabels.filter((label, index) => allLabels.indexOf(label) === index);
 
+        //Emitting filter options
         emit("filterOptions", categories, labels);
     }
 
@@ -206,8 +208,10 @@
     //Updating amount and status
     const updateStock = async(id, oldAmount, oldStatus) => {
 
+        //Checking for change
         if(amountInp.value === oldAmount && statusInp.value === oldStatus) return;
 
+        //Validating status
         if(amountInp.value === 0 && statusInp.value === "I lager") {
             statusInp.value = "Slut";
         }
@@ -216,14 +220,18 @@
             statusInp.value = "I lager";
         }
 
+        //Hiding inputs
         updatingStock.value = null;
 
+        //Updating product
         const updatedProduct = {
             status: statusInp.value,
             amount: amountInp.value
         }
 
         await StockService.updateStock(updatedProduct, id);
+
+        //Updating products
         getProducts();
 
     }

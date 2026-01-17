@@ -29,7 +29,7 @@
         </div>
 
         <div class="row">
-        <!-- Price input -->
+            <!-- Price input -->
             <div class="input-group m-3 col">
                 <input v-model.number="priceInp" type="number" class="form-control form-control-sm" placeholder="Försäljningspris" id="priceInp" aria-label="Försäljningspris">
                 <span class="input-group-text">kr</span>

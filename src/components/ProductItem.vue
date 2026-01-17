@@ -46,7 +46,7 @@
         <!-- Footer with edit-buttons -->
         <div class="model-footer">
             <hr>
-            <button type="button" class="btn btn-info float-end">Redigera</button>
+            <button v-if="!shortcut" type="button" class="btn btn-info float-end" @click="editProduct" data-bs-dismiss="modal">Redigera</button>
             <button type="button" class="btn btn-warning float-end mx-2" @click="removeProduct" data-bs-dismiss="modal">Ta bort</button>
         </div>
     </div>
@@ -66,12 +66,14 @@
     })
 
     //Emits
-    const emits = defineEmits(["hideProduct", "removedProduct"]);
+    const emits = defineEmits(["hideProduct", "editProduct","removedProduct"]);
 
     //Props
-    const props = defineProps(["product"]);
+    const props = defineProps(["product", "shortcut"]);
 
     //Reactive variables
+    const shortcut = ref(props.shortcut);
+
     const product = ref({});
     const shelfUnit = ref("");
     const orderDate = ref("");
@@ -144,12 +146,32 @@
         } 
     }
 
+    //Editing product
+    const editProduct = () => {
+        const compiledProduct = {
+            id: product.value.product_id,
+            code: product.value.ean_code,
+            name: product.value.name,
+            label: product.value.label,
+            category: product.value.category,
+            description: product.value.description,
+            price: product.value.price,
+            shelf: product.value.shelf_id,
+            status: product.value.status,
+            amount: product.value.amount
+        }
+    
+        emits('editProduct', compiledProduct);
+        
+        
+        // data-bs-toggle="modal" data-bs-target="#edit-product" but through js??
+    }
+
     //Remove product
     const removeProduct = async() => {
         await StockService.deleteProduct(product.value.product_id);
 
         emits("removedProduct", 'Produkt borttagen');
     }
-
 
 </script>

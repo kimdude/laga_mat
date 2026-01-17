@@ -7,7 +7,14 @@
         <!-- Product details -->
         <div class="modal" id="product-details">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct" @removed-product="refreshList('Produkt borttagen')"/>
+                <ProductItem v-if="displayProduct" :shortcut="false" :product="productId" @hide-product="showProduct" @edit-product="editProduct" @removed-product="refreshList('Produkt borttagen')"/>
+            </div>
+        </div>
+
+        <!-- Edit form -->
+        <div class="modal modal-lg" ref="edit-product">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <EditProductForm v-if="displayEdit" :product="productObj" @hide-edit="showEdit"/>
             </div>
         </div>
 
@@ -27,7 +34,7 @@
         <ProductsFilter v-if="displayFilters" class="my-4 pt-2 pb-3" :category-values="categorySelect" :label-values="labelSelect" @user-filters="filter"/>
 
         <!-- Form to add product -->
-         <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList('Produkt tillagd')"/>
+        <ProductForm v-if="displayAdd" class="my-4 pt-2 pb-3" @added-product="refreshList('Produkt tillagd')"/>
 
         <!-- All products -->
         <ProductsTable class="my-4":shortcut="false" :search-term="product" :filters="userFilter" @filter-options="createFilter" @product-id="showProduct"/>
@@ -36,21 +43,39 @@
 
 <script setup>
     //Imports
-    import { ref } from 'vue';
+    import { ref, useTemplateRef, onMounted } from 'vue';
+    import { Modal } from 'bootstrap';
     import ProductsTable from '@/components/ProductsTable.vue';
     import SearchFilter from '@/components/SearchFilter.vue';
     import ProductsFilter from '@/components/ProductsFilter.vue';
     import ProductForm from '@/components/ProductForm.vue';
     import ProductItem from '@/components/ProductItem.vue';
+    import EditProductForm from '@/components/EditProductForm.vue';
+
+    onMounted(() => {
+        //Creating modal instance
+        modalFunctions = new Modal(editModal.value);
+    })
 
     //Reactive variables
+    const confirmMessage = ref("");
+    const editModal = useTemplateRef("edit-product");
+    let modalFunctions;
+
+    //Variables to see and edit products
     const product = ref("");
     const productId= ref(null);
-    const displayFilters = ref(false);
+    const productObj = ref({});
+    const displayProduct = ref(false);
+    const displayEdit = ref(false);
+
+    //Variables to add products
     const displayAdd = ref(false);
+
+    //Variables to filter products
     const categorySelect = ref([]);
     const labelSelect = ref([]);
-    const confirmMessage = ref("");
+    const displayFilters = ref(false);
     const userFilter = ref({
         category: "",
         label: "",
@@ -105,9 +130,42 @@
         else toggleAddProduct();
     }
 
-    //Setting product id to display product
+    //Setting product id and toggling modal
     const showProduct = (id) => {
         productId.value = id;
+
+        if(displayProduct.value === false) return displayProduct.value = true;
+        else return displayProduct.value = false;
+        
+    }
+
+    //Toggling edit-modal
+    const showEdit = () => {
+
+        if(displayEdit.value === false) {
+  
+            //Hiding product
+            displayProduct.value = false;
+            displayEdit.value =  true;
+
+            //Controlling modal manually to 
+            modalFunctions.show();
+
+            return;
+
+        } else {
+            //Hiding edit
+            displayEdit.value =  false;
+            modalFunctions.hide();
+
+            return;
+        } 
+    }
+
+    //Setting product to edit
+    const editProduct = (details) => {
+        productObj.value = details;
+        showEdit();
     }
 
 </script>

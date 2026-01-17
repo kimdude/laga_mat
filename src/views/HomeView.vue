@@ -5,7 +5,7 @@
     <!-- Product details -->
     <div class="modal" id="product-details">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <ProductItem v-if="productId !== null" :product="productId" @hide-product="showProduct" @removed-product="refreshList('Produkt borttagen')"/>
+            <ProductItem v-if="productId !== null" :shortcut="true" :product="productId" @hide-product="showProduct" @removed-product="refreshList('Produkt borttagen')"/>
         </div>
     </div>
 
