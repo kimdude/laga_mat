@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="order in ordersList" :key="order.order_id">
+            <tr v-for="order in ordersList" :key="order.order_id" data-bs-toggle="modal" data-bs-target="#order-details" @click="displayOrder(order)">
                 <td>{{order.order_id}}</td>
                 <td>{{order.date}}</td>
                 <td>{{order.status}}</td>
@@ -21,14 +21,15 @@
 <script setup>
     //Imports
     import { watch, ref, onMounted } from 'vue';
-    import { useRouter } from 'vue-router';
+    import OrderService from '@/services/OrderService';
 
-    //Variables
-    const router = useRouter();
-    const token = localStorage.getItem("token");
+    //Props
     const props = defineProps({
         searchTerm: String
     });
+
+    //Emits
+    const emits = defineEmits(["viewOrder"]);
 
     //Reference variables
     const ordersList = ref([]); //Orderss being displayed
@@ -41,55 +42,39 @@
 
     //Fetching all orders
     const fetchOrders = async() => {
-        try {
-            const result = await fetch("https://dt193g-projekt.onrender.com/orders", {
-                method: "GET",
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": "Bearer " + token
-                }
-            });
 
-            if(!result.ok){ 
-                router.push({name: "logga_in"});
-            }
+        const result = await OrderService.fetchOrders();
+        allOrders.value = result;
+        
+        //Formatting dates and status
+        for(const order of allOrders.value) {
 
-            const data = await result.json();
-            allOrders.value = data.result;
+            //Formating status
+            if(order.status === true) order.status = "Levererad";
+            else order.status = "På väg";
 
-            //Formatting dates and status
-            for(const order of allOrders.value) {
+            //Formating date
+            const date = new Date(order.date);
+            let year = date.getFullYear();
+            let month = date.getMonth() +1;
+            let day = date.getDate();
 
-                //Formating status
-                if(order.status === true) order.status = "Levererad";
-                else order.status = "På väg";
+            if(month <= 9) month = `0${month}`;
+            if(day <= 9) day = `0${day}`;
 
-                //Formating date
-                const date = new Date(order.date);
-                let year = date.getFullYear();
-                let month = date.getMonth() +1;
-                let day = date.getDate();
+            const formatedDate = `${year}-${month}-${day}`;
 
-                if(month <= 9) month = `0${month}`;
-                if(day <= 9) day = `0${day}`;
+            order.date = formatedDate;
 
-                const formatedDate = `${year}-${month}-${day}`;
-
-                order.date = formatedDate;
-
-            }
-
-            //Sorting orders from most recent to oldest orders
-            allOrders.value.sort((a,b) => { 
-                return a.date.localeCompare(b.date);
-            }).reverse();
-
-            await loadOrders();
-            return;
-
-        } catch(error) {
-            router.push({name: "logga_in"});
         }
+
+        //Sorting orders from most recent to oldest orders
+        allOrders.value.sort((a,b) => { 
+            return a.date.localeCompare(b.date);
+        }).reverse();
+
+        loadOrders();
+
     }
 
     //Displaying all products
@@ -140,13 +125,29 @@
         }
     }
 
+    //Compiling order and displaying
+    const displayOrder = (thisOrder) => {
+        console.log("testing")
+        
+        const orderSpec = {
+            id: thisOrder.order_id,
+            status: thisOrder.status,
+            date: thisOrder.date,
+            user: thisOrder.user_id
+        }
+
+        emits("viewOrder", orderSpec);
+    }
+
+
+
     //Watching searchterm for changes and forcing to execute immidiatley
     watch(() => props.searchTerm, searchOrder, { immediate: true } );
 
 </script>
 
 <style scoped>
-    th:hover {
+    th:hover, tr:hover {
         cursor: pointer;
     }
 </style>

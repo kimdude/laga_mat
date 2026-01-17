@@ -8,7 +8,7 @@
             <th scope="col" v-if="!props.shortcut" @click="sort('price')">Pris</th>
             <th scope="col" v-if="!props.shortcut" @click="sort('status')">Lager&shy;status</th>
             <th scope="col" @click="sort('amount')">Antal</th>
-            <th scope="col" v-if="props.shortcut"></th>
+            <th scope="col">Status</th>
         </tr>
     </thead>
     <!-- Tbody -->
@@ -38,8 +38,10 @@
                 <!-- Button to update -->
                 <button class="btn btn-warning" @click="updateStock(product.product_id, product.status, product.amount)">Uppdatera</button>
             </td>
-            <td v-if="props.shortcut">
-                <button class="btn btn-warning">Beställ</button>
+            <td>
+                <span v-if="product.amount === 0 && product.status !== 'Beställd'" class="badge text-bg-danger">Slut</span>
+                <span v-if="product.amount > 0 && product.amount < 3 && product.status  !== 'Beställd'" class="badge text-bg-warning">Lågt</span>
+                <span v-if="product.status  === 'Beställd'" class="badge text-bg-success">Beställd</span>
             </td>
         </tr>
     </tbody>
@@ -66,6 +68,7 @@
     const statusInp= ref("");
     const amountInp = ref(null);
     const updatingStock = ref(null);
+    
     
     //When view is loaded
     onMounted(()=> {

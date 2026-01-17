@@ -2,7 +2,7 @@
     <!-- Content for modal -->
     <div class="modal-content p-4">
         <!-- Header -->
-        <div class="model-header container-float">
+        <div class="model-header container-fluid">
             <div class="row">
                 <h2 class="col">Redigera Produkt</h2>
                 <button type="button" class="btn-close col-1" aria-label="Stäng" @click="$emit('hideEdit')"></button>

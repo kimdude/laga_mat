@@ -1,9 +1,9 @@
 <template>
-    <!-- Content for modal -->
+    <!-- Content for modal with product details -->
     <div class="modal-content p-4">
 
         <!-- Header -->
-        <div class="model-header container-float">
+        <div class="model-header container-fluid">
             <div class="row">
                 <h2 class="modal-title col">{{ product?.name }}</h2>
                 <button type="button" class="btn-close col-1" data-bs-dismiss="modal" aria-label="Stäng" @click="$emit('hideProduct',null)"></button>
@@ -14,7 +14,7 @@
 
         <!-- Body -->
         <div class="modal-body">
-            <div class="container-float">
+            <div class="container-container-fluid">
                 <div class="row">
                     <p class="col">Märke: {{ product?.label }}</p>
                     <p class="col">Kategori: {{ product?.category }}</p>
@@ -61,7 +61,6 @@
     import StockService from '@/services/StockService';
 
     onMounted(() => {
-
         if(props.product !== null) getProduct();
     })
 

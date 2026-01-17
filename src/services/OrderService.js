@@ -4,6 +4,16 @@
 const token = localStorage.getItem("token");
 
 export default {
+    //Fetch list from local storage
+    fetchOrderList() {
+        const list = localStorage.getItem("orderlist");
+
+        if(list) {
+            return list;
+        } else {
+            return null;
+        }
+    },
 
     //Fetching all orders
     async fetchOrders() {
@@ -21,8 +31,7 @@ export default {
             }
 
             const data = await result.json();
-            return data;
-
+            return data.result;
 
         } catch(error) {
             console.log(error);

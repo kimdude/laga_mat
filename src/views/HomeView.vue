@@ -9,6 +9,13 @@
         </div>
     </div>
 
+    <!-- Order details modal -->
+    <div class="modal modal-lg" id="order-details">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <OrderItem v-if="displayOrder" :order="orderSpec" @view-order="toggleOrder"/>
+        </div>
+    </div>
+
     <!-- Genvägar -->
     <section class="p-4 mx-2">
         <h1 class="text-center mt-4">Välkommen!</h1>
@@ -29,7 +36,7 @@
 
             <!-- Low stock products -->
             <ProductsTable v-if="displayed !== 'searchOrder'" :shortcut="true" :search-term="searchFor" @product-id="showProduct"/>
-            <OrderTable v-if="displayed === 'searchOrder'" :shortcut="true" :search-term="searchFor"/>
+            <OrderTable v-if="displayed === 'searchOrder'" :shortcut="true" :search-term="searchFor" @view-order="toggleOrder"/>
         </div>
     </section>
 </template>
@@ -41,6 +48,7 @@
     import SearchFilter from '@/components/SearchFilter.vue';
     import OrderTable from '@/components/OrderTable.vue';
     import ProductItem from '@/components/ProductItem.vue';
+    import OrderItem from '@/components/OrderItem.vue';
 
     //Emits
     const emits = defineEmits(['childCompLogin']);
@@ -51,6 +59,9 @@
     const searchFor = ref("");
     const productId = ref(null);
     const confirmMessage = ref("");
+
+    const displayOrder = ref(false);
+    const orderSpec = ref({});
 
     onMounted(() => {
         emits('childCompLogin', false);
@@ -90,6 +101,17 @@
 
     const showProduct = (id) => {
         productId.value = id;
+    }
+
+    //Toggling order details
+    const toggleOrder = (specifications) => {
+
+        console.log(specifications)
+        orderSpec.value = specifications;
+
+        //Toggling modal
+        if(displayOrder.value === false) return displayOrder.value = true;
+        else return displayOrder.value = false;
     }
 
 </script>

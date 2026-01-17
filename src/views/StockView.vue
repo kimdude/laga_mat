@@ -5,7 +5,7 @@
         <div v-if="confirmMessage !== ''" class="alert alert-warning position-absolute top-50 start-50 translate-middle" role="alert"> {{ confirmMessage }}</div>
 
         <!-- Product details -->
-        <div class="modal" id="product-details">
+        <div class="modal modal-lg" id="product-details">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <ProductItem v-if="displayProduct" :shortcut="false" :product="productId" @hide-product="showProduct" @edit-product="editProduct" @removed-product="refreshList('Produkt borttagen')"/>
             </div>
@@ -22,7 +22,7 @@
         <SearchFilter parent="products" @find="searchProduct"/>
 
         <!-- Buttons for filter and add -->
-        <div class="container-float">
+        <div class="container-fluid">
             <div class="row">
                 <h2 class="col">Lager</h2>
                 <img src="../assets/images/plus_icon.svg" class="col-1 p-1" title="Lägg till produkt" @click="toggleAddProduct">
